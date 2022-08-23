@@ -1,0 +1,104 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.calculator {
+  display: flex;
+  flex-wrap: wrap;
+  width: 415px;
+  box-shadow: 5px 5px 10px #eeeeee;
+  padding: 25px 15px 10px 15px;
+}
+
+input {
+  width: 100%;
+  height: 60px;
+  margin-bottom: 3%;
+  padding: 3% 3% 2.5% 3%;
+  font-size: 1.5em;
+  color:#8b8b8b;
+  border: 1px solid #e7e7e7;  
+  border-radius: 0.1em;
+  box-shadow: 1px 1px 2px #eeeeee;
+  box-sizing: border-box;
+  text-align: right;
+}
+
+input:hover {
+  cursor: default;
+}
+
+input:focus {
+  outline: none !important;
+}
+
+.group__top {
+  width: 100%;
+  display: flex;
+  gap: 2.75%;
+  margin-bottom: 3%;
+}
+
+.group__top button {
+  background-color: #dddddd;
+  border: 1px solid #cccccc;
+  border: none;
+  height: 49px;
+  border-radius: 0.1em;
+}
+
+.group__top button:hover {
+  background-color: #bebebe;
+}
+
+.group__bottom {
+  display: flex;
+  width: 100%;
+  gap: 2.75%
+}
+
+.operation {
+  width: 25%;
+}
+
+.group__numbers {
+  display: flex;
+  flex-wrap: wrap;
+  width: 80.5%;
+  gap: 5%
+}
+
+.light-grey {
+  width: 25%;
+  height: 49px;
+  flex-grow: 1;
+  margin-bottom: 4%;
+  background-color: #f9f9f9;
+  border: 1px solid #f1f1f1;
+  border-radius: 0.1em;
+}
+
+.light-grey:hover {
+  background-color: rgb(240, 240, 240);
+}
+
+.calculate {
+  width: 25%;
+  margin-bottom: 3%;
+  background-color: #4d90fd;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.1em;
+}
+
+.calculate:hover {
+  background-color: #4d88e6;
+}
