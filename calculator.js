@@ -1,5 +1,5 @@
 const buttons = document.querySelectorAll('button');
-const display = document.querySelector('input');
+const display = document.querySelector('.display');
 const decimalPoint = document.querySelector('.point');
 
 const arrayOfDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
@@ -35,30 +35,30 @@ function inputController() {
   else if (previousInput === 0) {
       if (currentInput == '.') {
         numberCreator.push(currentInput);
-        display.value += currentInput;
+        display.innerHTML += currentInput;
         removeListenerForDecimalPoint();
       }
       else if (whatKindOfInput(currentInput) == 'digit') {
         numberCreator.push(currentInput);
-        display.value += currentInput;
+        display.innerHTML += currentInput;
       }
       previousInput = currentInput;
   }
   else if (whatKindOfInput(previousInput) == 'digit') {
     if (currentInput == '.') {
       numberCreator.push(currentInput);
-      display.value += currentInput;
+      display.innerHTML += currentInput;
       removeListenerForDecimalPoint();
     }
     else if (whatKindOfInput(currentInput) == 'digit') {
       numberCreator.push(currentInput);
-      display.value += currentInput;
+      display.innerHTML += currentInput;
     }
     else if (whatKindOfInput(currentInput) == 'operator') {
       numbersToWorkWith.push(parseFloat(numberCreator.join('')));
       numberCreator = [];
       operatorsToWorkWith.push(currentInput);
-      display.value += currentInput;
+      display.innerHTML += currentInput;
       addListenerToDecimalPoint();
     }
     else if (whatKindOfInput(currentInput) == 'start') {
@@ -71,16 +71,16 @@ function inputController() {
   else if (whatKindOfInput(previousInput) == 'operator') {
     if (currentInput == '.') {
       numberCreator.push(currentInput);
-      display.value += currentInput;
+      display.innerHTML += currentInput;
       removeListenerForDecimalPoint();
     }
     else if (whatKindOfInput(currentInput) == 'digit') {
       numberCreator.push(currentInput);
-      display.value += currentInput;
+      display.innerHTML += currentInput;
     }
     else if (whatKindOfInput(currentInput) == 'operator') {
       operatorsToWorkWith.splice(-1, 1, currentInput);
-      display.value = display.value.replace(/.$/, currentInput)
+      display.innerHTML = display.innerHTML.replace(/.$/, currentInput)
     }
     else if (whatKindOfInput(currentInput) == 'start') {
       operatorsToWorkWith.splice(-1, 1);
@@ -92,24 +92,24 @@ function inputController() {
     if (currentInput == '.') {
       numbersToWorkWith = [];
       numberCreator.push(currentInput);
-      display.value = currentInput;
+      display.innerHTML = currentInput;
       removeListenerForDecimalPoint();
     }
     else if (whatKindOfInput(currentInput) == 'digit') {
       numbersToWorkWith = [];
       numberCreator.push(currentInput);
-      display.value = currentInput;
+      display.innerHTML = currentInput;
     }
     else if (whatKindOfInput(currentInput) == 'operator') {
       operatorsToWorkWith.push(currentInput);
-      display.value += currentInput;
+      display.innerHTML += currentInput;
     }
     previousInput = currentInput;
   }
 }
 
 const displayHandler = () => {
-  display.value += currentInput;
+  display.innerHTML += currentInput;
 }
 
 const whatKindOfInput = (input) => {
@@ -126,7 +126,7 @@ const clearEverything = () => {
   numberCreator = [];
   numbersToWorkWith = [];
   operatorsToWorkWith = [];
-  display.value = null;
+  display.innerHTML = null;
   addListenerToDecimalPoint()
   previousInput = 0;
 }
@@ -135,7 +135,7 @@ const clearEverything = () => {
 const calculate = () => {
   multiplyOrDivide();
   subtract();
-  display.value = summation();
+  display.innerHTML = summation();
   finishUpCalculation();
 };
 
@@ -171,7 +171,7 @@ const summation = () => {
 };
 
 const finishUpCalculation = () => {
-  numbersToWorkWith = [parseFloat(display.value)];
+  numbersToWorkWith = [parseFloat(display.innerHTML)];
   operatorsToWorkWith = [];
   addListenerToDecimalPoint();
 };

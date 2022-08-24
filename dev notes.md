@@ -1,3 +1,12 @@
+## v0.91
+
+### Elkészült:
+- Túl hosszú karaktersorozat balra futtatása (lehetőleg anélkül, hogy az egész input rendszer belebolonduljon...)
+
+### Még hiányzik
+- Kód áramvonalasítása... egyre inkább...
+- Debug
+
 ## v0.9
 
 ### Elkészült:
