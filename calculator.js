@@ -33,6 +33,11 @@ function pressButton() {
         inputHandler();
         displayHandler();
         checkForTooManyOperators()
+    } else if (lastInput == '=') {
+        inputHandler();
+        displayHandler();
+        checkForTooManyOperators();
+        calculate()
     } else {
         inputHandler();
         displayHandler();
@@ -52,6 +57,10 @@ const inputHandler = () => {
         numberCreator = [];
         operatorsToWorkWith.push(lastInput);
         addListenerToDecimalPoint();
+    } else if (lastInput == '=') {
+        numbersToWorkWith.push(parseFloat(numberCreator.join('')));
+        numberCreator = [];
+        addListenerToDecimalPoint();
     }
 };
 
@@ -60,22 +69,42 @@ const clearEverything = () => {
     numbersToWorkWith = [];
     operatorsToWorkWith = [];
     display.value = null;
+    addListenerToDecimalPoint()
 }
 
 const calculate = () => {
-
-}
-
-const calculation = (item) => {
-    if (item == '+') {
-        return previousNumber + currentNumber
-    } else if (item == '-') {
-        return previousNumber - currentNumber
-    } else if (item == 'x') {
-        return previousNumber * currentNumber
-    } else {
-        return previousNumber / currentNumber
+    let accumulator = 0;
+    for (let i = 0; i < operatorsToWorkWith.length; i++) {
+        if (operatorsToWorkWith[i] == 'x' || operatorsToWorkWith[i] == '÷') {
+            if (operatorsToWorkWith[i] == 'x') {
+                accumulator = numbersToWorkWith[i] * numbersToWorkWith[i + 1];
+                numbersToWorkWith.splice(i, 2, accumulator);
+                accumulator = 0;
+                operatorsToWorkWith.splice(i, 1);
+                i -= 1;
+            } else {
+                accumulator = numbersToWorkWith[i] / numbersToWorkWith[i + 1];
+                numbersToWorkWith.splice(i, 2, accumulator)
+                accumulator = 0;
+                operatorsToWorkWith.splice(i, 1)
+                i -= 1;
+            }
+        }
     }
+    for (let i = 0; i < operatorsToWorkWith.length; i++) {
+        if (operatorsToWorkWith[i] == '-') {
+            accumulator = numbersToWorkWith[i] - numbersToWorkWith[i + 1];
+            numbersToWorkWith.splice(i, 2, accumulator)
+            accumulator = 0;
+            operatorsToWorkWith.splice(i, 1)
+            i -= 1;
+        }
+    }
+    display.value = numbersToWorkWith.reduce((previousValue, currentValue) =>
+        previousValue + currentValue);
+    numbersToWorkWith = [display.value];
+    operatorsToWorkWith = [];
+    lastInput = null;
 }
 
 const checkForTooManyOperators = () => {

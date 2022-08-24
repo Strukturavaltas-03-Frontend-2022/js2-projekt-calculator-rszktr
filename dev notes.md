@@ -1,3 +1,14 @@
+## v0.7
+
+### Elkészült:
+- Egyenlőségjel gomb működése.
+- Műveletek elvégzése a precedenciaszabályok figyelembevételével(!).
+
+### Még hiányzik
+- A legelső input ne lehessen műveleti jel DE lehessen tovább számolni a kalkuláció végeredményével.
+- Túl hosszú karaktersorozat balra futtatása (lehetőleg anélkül, hogy az egész input rendszer belebolonduljon...)
+- Kód áramvonalasítása.
+
 ## v0.6
 
 ### Elkészült:
