@@ -4,118 +4,174 @@ const decimalPoint = document.querySelector('.point');
 
 const arrayOfDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
 const arrayOfOperators = ['+', '-', 'x', '÷']
+const arrayOfEverything = [arrayOfDigits, arrayOfOperators, '=']
 
 let numberCreator = [];
 let numbersToWorkWith = [];
 let operatorsToWorkWith = [];
-let lastInput = 0;
+let currentInput = 0;
+let previousInput = 0;
 
+// Eseményfigyelők
 (addListener = () => {
-    buttons.forEach(item =>
-        item.addEventListener('click', pressButton));
+  buttons.forEach(item =>
+    item.addEventListener('click', inputController));
 })();
 
 const addListenerToDecimalPoint = () => {
-    decimalPoint.addEventListener('click', pressButton)
+  decimalPoint.addEventListener('click', inputController)
 };
 
-const resetListenerForDecimalPoint = () => {
-    decimalPoint.removeEventListener('click', pressButton)
+const removeListenerForDecimalPoint = () => {
+  decimalPoint.removeEventListener('click', inputController)
 };
 
-function pressButton() {
-    checkForErrorDisplay();
-    lastInput = this.innerHTML;
-    if (lastInput == 'C') {
-        clearEverything()
-    } else if (lastInput == '.') {
-        resetListenerForDecimalPoint();
-        inputHandler();
-        displayHandler();
-        checkForTooManyOperators()
-    } else if (lastInput == '=') {
-        inputHandler();
-        displayHandler();
-        checkForTooManyOperators();
-        calculate()
-    } else {
-        inputHandler();
-        displayHandler();
-        checkForTooManyOperators()
+// Gombnyomás. Számok létrehozása, műveletek előkészítése.
+function inputController() {
+  currentInput = this.innerHTML;
+  if (currentInput == 'C') {
+    clearEverything()
+  } 
+  else if (previousInput === 0) {
+      if (currentInput == '.') {
+        numberCreator.push(currentInput);
+        display.value += currentInput;
+        removeListenerForDecimalPoint();
+      }
+      else if (whatKindOfInput(currentInput) == 'digit') {
+        numberCreator.push(currentInput);
+        display.value += currentInput;
+      }
+      previousInput = currentInput;
+  }
+  else if (whatKindOfInput(previousInput) == 'digit') {
+    if (currentInput == '.') {
+      numberCreator.push(currentInput);
+      display.value += currentInput;
+      removeListenerForDecimalPoint();
     }
+    else if (whatKindOfInput(currentInput) == 'digit') {
+      numberCreator.push(currentInput);
+      display.value += currentInput;
+    }
+    else if (whatKindOfInput(currentInput) == 'operator') {
+      numbersToWorkWith.push(parseFloat(numberCreator.join('')));
+      numberCreator = [];
+      operatorsToWorkWith.push(currentInput);
+      display.value += currentInput;
+      addListenerToDecimalPoint();
+    }
+    else if (whatKindOfInput(currentInput) == 'start') {
+      numbersToWorkWith.push(parseFloat(numberCreator.join('')));
+      numberCreator = [];
+      calculate()
+    }
+    previousInput = currentInput;
+  }
+  else if (whatKindOfInput(previousInput) == 'operator') {
+    if (currentInput == '.') {
+      numberCreator.push(currentInput);
+      display.value += currentInput;
+      removeListenerForDecimalPoint();
+    }
+    else if (whatKindOfInput(currentInput) == 'digit') {
+      numberCreator.push(currentInput);
+      display.value += currentInput;
+    }
+    else if (whatKindOfInput(currentInput) == 'operator') {
+      operatorsToWorkWith.splice(-1, 1, currentInput);
+      display.value = display.value.replace(/.$/, currentInput)
+    }
+    else if (whatKindOfInput(currentInput) == 'start') {
+      operatorsToWorkWith.splice(-1, 1);
+      calculate()
+    }
+    previousInput = currentInput;
+  } 
+  else if (whatKindOfInput(previousInput) == 'start') {
+    if (currentInput == '.') {
+      numbersToWorkWith = [];
+      numberCreator.push(currentInput);
+      display.value = currentInput;
+      removeListenerForDecimalPoint();
+    }
+    else if (whatKindOfInput(currentInput) == 'digit') {
+      numbersToWorkWith = [];
+      numberCreator.push(currentInput);
+      display.value = currentInput;
+    }
+    else if (whatKindOfInput(currentInput) == 'operator') {
+      operatorsToWorkWith.push(currentInput);
+      display.value += currentInput;
+    }
+    previousInput = currentInput;
+  }
 }
 
 const displayHandler = () => {
-    display.value += (lastInput);
+  display.value += currentInput;
 }
 
-const inputHandler = () => {
-    if (arrayOfDigits.includes(lastInput)) {
-        numberCreator.push(lastInput)
-    } else if (arrayOfOperators.includes(lastInput)) {
-        numbersToWorkWith.push(parseFloat(numberCreator.join('')));
-        numberCreator = [];
-        operatorsToWorkWith.push(lastInput);
-        addListenerToDecimalPoint();
-    } else if (lastInput == '=') {
-        numbersToWorkWith.push(parseFloat(numberCreator.join('')));
-        numberCreator = [];
-        addListenerToDecimalPoint();
-    }
+const whatKindOfInput = (input) => {
+  if (arrayOfDigits.includes(input)) {
+    return 'digit'
+  } else if (arrayOfOperators.includes(input)) {
+    return 'operator'
+  } else if (input == '=') {
+    return 'start'
+  }
 };
 
 const clearEverything = () => {
-    numberCreator = [];
-    numbersToWorkWith = [];
-    operatorsToWorkWith = [];
-    display.value = null;
-    addListenerToDecimalPoint()
+  numberCreator = [];
+  numbersToWorkWith = [];
+  operatorsToWorkWith = [];
+  display.value = null;
+  addListenerToDecimalPoint()
+  previousInput = 0;
 }
 
+// A számolás
 const calculate = () => {
-    let accumulator = 0;
-    for (let i = 0; i < operatorsToWorkWith.length; i++) {
-        if (operatorsToWorkWith[i] == 'x' || operatorsToWorkWith[i] == '÷') {
-            if (operatorsToWorkWith[i] == 'x') {
-                accumulator = numbersToWorkWith[i] * numbersToWorkWith[i + 1];
-                numbersToWorkWith.splice(i, 2, accumulator);
-                accumulator = 0;
-                operatorsToWorkWith.splice(i, 1);
-                i -= 1;
-            } else {
-                accumulator = numbersToWorkWith[i] / numbersToWorkWith[i + 1];
-                numbersToWorkWith.splice(i, 2, accumulator)
-                accumulator = 0;
-                operatorsToWorkWith.splice(i, 1)
-                i -= 1;
-            }
-        }
-    }
-    for (let i = 0; i < operatorsToWorkWith.length; i++) {
-        if (operatorsToWorkWith[i] == '-') {
-            accumulator = numbersToWorkWith[i] - numbersToWorkWith[i + 1];
-            numbersToWorkWith.splice(i, 2, accumulator)
-            accumulator = 0;
-            operatorsToWorkWith.splice(i, 1)
-            i -= 1;
-        }
-    }
-    display.value = numbersToWorkWith.reduce((previousValue, currentValue) =>
-        previousValue + currentValue);
-    numbersToWorkWith = [display.value];
-    operatorsToWorkWith = [];
-    lastInput = null;
-}
-
-const checkForTooManyOperators = () => {
-    if (numbersToWorkWith.includes(NaN) || numbersToWorkWith.includes('..')) {
-        clearEverything();
-        display.value = 'ERROR!'
-    }
+  multiplyOrDivide();
+  subtract();
+  display.value = summation();
+  finishUpCalculation();
 };
 
-const checkForErrorDisplay = () => {
-    if (display.value == 'ERROR!') {
-        clearEverything();
+const calculationStep = (index, partialResult) => {
+  numbersToWorkWith.splice(index, 2, partialResult)
+  operatorsToWorkWith.splice(index, 1)
+  return index - 1;
+};
+
+const multiplyOrDivide = () => {
+  for (let i = 0; i < operatorsToWorkWith.length; i++) {
+    if (operatorsToWorkWith[i] == 'x' || operatorsToWorkWith[i] == '÷') {
+      if (operatorsToWorkWith[i] == 'x') {
+        i = calculationStep(i, numbersToWorkWith[i] * numbersToWorkWith[i + 1]);
+      } else {
+        i = calculationStep(i, numbersToWorkWith[i] / numbersToWorkWith[i + 1]);
+      }
     }
-}
+  }
+};
+
+const subtract = () => {
+  for (let i = 0; i < operatorsToWorkWith.length; i++) {
+    if (operatorsToWorkWith[i] == '-') {
+      i = calculationStep(i, numbersToWorkWith[i] - numbersToWorkWith[i + 1]);
+    }
+  }
+};
+
+const summation = () => {
+  return numbersToWorkWith.reduce((previousValue, currentValue) =>
+    previousValue + currentValue);
+};
+
+const finishUpCalculation = () => {
+  numbersToWorkWith = [parseFloat(display.value)];
+  operatorsToWorkWith = [];
+  addListenerToDecimalPoint();
+};
