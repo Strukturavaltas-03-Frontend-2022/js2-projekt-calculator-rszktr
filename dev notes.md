@@ -1,4 +1,4 @@
-## v0.95
+## v0.951
 
 ### Elkészült:
 - Végeredményt követő tizedesjel input új számítást kezd
@@ -8,6 +8,7 @@
 
 ### Még hiányzik
 - Ha két művelet között csak egy tizedesjel szerepel, akkor azt írja ki 0-ként?
+- Bug: A legelején vagy a végeredményt követő sok műveleti jel váltogatás meghagy egy fölös operátort. 
 - Debug
 
 ## v0.91
