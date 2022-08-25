@@ -4,9 +4,8 @@ const decimalPoint = document.querySelector('.point');
 
 const arrayOfDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
 const arrayOfOperators = ['+', '-', 'x', '÷']
-const arrayOfEverything = [arrayOfDigits, arrayOfOperators, '=']
 
-let numberCreator = [];
+let digitArray = [];
 let numbersToWorkWith = [];
 let operatorsToWorkWith = [];
 let currentInput = 0;
@@ -26,116 +25,114 @@ const removeListenerForDecimalPoint = () => {
   decimalPoint.removeEventListener('click', inputController)
 };
 
-// Gombnyomás. Számok létrehozása, műveletek előkészítése.
-function inputController() {
-  currentInput = this.innerHTML;
-  if (currentInput == 'C') {
-    clearEverything()
-  } 
-  else if (previousInput === 0) {
-      if (currentInput == '.') {
-        numberCreator.push(currentInput);
-        display.innerHTML += currentInput;
-        removeListenerForDecimalPoint();
-      }
-      else if (whatKindOfInput(currentInput) == 'digit') {
-        numberCreator.push(currentInput);
-        display.innerHTML += currentInput;
-      }
-      previousInput = currentInput;
+// Részműködések
+const collectDigit = (digit) => {
+  digitArray.push(digit);
+  display.innerHTML += digit;
+};
+
+const createNumber = () => {
+  if (digitArray.length == 1 && digitArray[0] == '.') {
+    digitArray[0] = 0;
   }
-  else if (whatKindOfInput(previousInput) == 'digit') {
-    if (currentInput == '.') {
-      numberCreator.push(currentInput);
-      display.innerHTML += currentInput;
-      removeListenerForDecimalPoint();
-    }
-    else if (whatKindOfInput(currentInput) == 'digit') {
-      numberCreator.push(currentInput);
-      display.innerHTML += currentInput;
-    }
-    else if (whatKindOfInput(currentInput) == 'operator') {
-      numbersToWorkWith.push(parseFloat(numberCreator.join('')));
-      numberCreator = [];
-      operatorsToWorkWith.push(currentInput);
-      display.innerHTML += currentInput;
-      addListenerToDecimalPoint();
-    }
-    else if (whatKindOfInput(currentInput) == 'start') {
-      numbersToWorkWith.push(parseFloat(numberCreator.join('')));
-      numberCreator = [];
+  numbersToWorkWith.push(parseFloat(digitArray.join('')));
+  digitArray = [];
+};
+
+const clearDisplayAndNumbersToWorkWith = () => {
+  numbersToWorkWith = [];
+  display.innerHTML = '';
+};
+
+const collectOperator = (operator) => {
+  operatorsToWorkWith.push(operator);
+  display.innerHTML += operator;
+  addListenerToDecimalPoint();
+};
+
+// Cselekményfák előzetes inputok alapján
+const previousInputIsNone = () => {
+  if (currentInput == '.') { removeListenerForDecimalPoint() };
+  if (whatKindOfInput(currentInput) == 'digit') {collectDigit(currentInput) }
+
+  previousInput = currentInput;
+};
+
+const previousInputIsDigit = () => {
+  switch (whatKindOfInput(currentInput)) {
+    case 'digit':
+      previousInputIsNone();
+      break;
+    case 'operator':
+      createNumber();
+      collectOperator(currentInput);
+      break;
+    case 'start':
+      createNumber();
       calculate()
-    }
-    previousInput = currentInput;
+      break;
   }
-  else if (whatKindOfInput(previousInput) == 'operator') {
-    if (currentInput == '.') {
-      numberCreator.push(currentInput);
-      display.innerHTML += currentInput;
-      removeListenerForDecimalPoint();
-    }
-    else if (whatKindOfInput(currentInput) == 'digit') {
-      numberCreator.push(currentInput);
-      display.innerHTML += currentInput;
-    }
-    else if (whatKindOfInput(currentInput) == 'operator') {
+  previousInput = currentInput;
+};
+
+const previousInputIsOperator = () => {
+  switch (whatKindOfInput(currentInput)) {
+    case 'digit':
+      previousInputIsNone();
+      break;
+    case 'operator':
       operatorsToWorkWith.splice(-1, 1, currentInput);
       display.innerHTML = display.innerHTML.replace(/.$/, currentInput)
-    }
-    else if (whatKindOfInput(currentInput) == 'start') {
+      break;
+    case 'start':
       operatorsToWorkWith.splice(-1, 1);
       calculate()
-    }
-    previousInput = currentInput;
-  } 
-  else if (whatKindOfInput(previousInput) == 'start') {
-    if (currentInput == '.') {
-      numbersToWorkWith = [];
-      numberCreator.push(currentInput);
-      display.innerHTML = currentInput;
-      removeListenerForDecimalPoint();
-    }
-    else if (whatKindOfInput(currentInput) == 'digit') {
-      numbersToWorkWith = [];
-      numberCreator.push(currentInput);
-      display.innerHTML = currentInput;
-    }
-    else if (whatKindOfInput(currentInput) == 'operator') {
-      operatorsToWorkWith.push(currentInput);
-      display.innerHTML += currentInput;
-    }
-    previousInput = currentInput;
+      break;
   }
-}
+  previousInput = currentInput;
+};
 
-const displayHandler = () => {
-  display.innerHTML += currentInput;
-}
+const previousInputIsStart = () => {
+  if (whatKindOfInput(currentInput) == 'operator') {
+    collectOperator(currentInput);
+  } else if (whatKindOfInput(currentInput) == 'digit') {
+    clearDisplayAndNumbersToWorkWith();
+    previousInputIsNone();
+  };
+  previousInput = currentInput;
+};
 
 const whatKindOfInput = (input) => {
-  if (arrayOfDigits.includes(input)) {
-    return 'digit'
-  } else if (arrayOfOperators.includes(input)) {
-    return 'operator'
-  } else if (input == '=') {
-    return 'start'
-  }
+  return arrayOfDigits.includes(input) ? 'digit' :
+    arrayOfOperators.includes(input) ? 'operator' :
+      input == '=' ? 'start' : none;
 };
 
 const clearEverything = () => {
-  numberCreator = [];
+  digitArray = [];
   numbersToWorkWith = [];
   operatorsToWorkWith = [];
   display.innerHTML = null;
-  addListenerToDecimalPoint()
   previousInput = 0;
-}
+  addListenerToDecimalPoint()
+};
+
+// Az adatbevitel folyamata
+function inputController() {
+  currentInput = this.innerHTML;
+  currentInput == 'C' ? clearEverything() :
+    previousInput === 0 ? previousInputIsNone() :
+      whatKindOfInput(previousInput) == 'digit' ? previousInputIsDigit() :
+        whatKindOfInput(previousInput) == 'operator' ? previousInputIsOperator() :
+          whatKindOfInput(previousInput) == 'start' ? previousInputIsStart() : none
+};
 
 // A számolás
 const calculate = () => {
   multiplyOrDivide();
   subtract();
   display.innerHTML = summation();
+  if (display.innerHTML == 'NaN') {display.innerHTML = '(NaN)e szórakozzál velem...'}
   finishUpCalculation();
 };
 

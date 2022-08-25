@@ -1,3 +1,15 @@
+## v0.95
+
+### Elkészült:
+- Végeredményt követő tizedesjel input új számítást kezd
+- Ha két művelet között csak egy tizedesjel szerepel, akkor azt 0-ként értelmezi
+- A kód most már egész szép... (thank you, switch and nested ternary operator!)
+- ... cserébe viszont teljesen elvesztettem a fonalat, úgyhogy újabb ellenőrzésekre lesz szükség...
+
+### Még hiányzik
+- Ha két művelet között csak egy tizedesjel szerepel, akkor azt írja ki 0-ként?
+- Debug
+
 ## v0.91
 
 ### Elkészült:
