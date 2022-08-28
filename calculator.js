@@ -26,6 +26,12 @@ const removeListenerForDecimalPoint = () => {
 };
 
 // Részműködések
+const whatKindOfInput = (input) => {
+  return arrayOfDigits.includes(input) ? 'digit' :
+    arrayOfOperators.includes(input) ? 'operator' :
+      input == '=' ? 'start' : none;
+};
+
 const collectDigit = (digit) => {
   digitArray.push(digit);
   display.innerHTML += digit;
@@ -33,15 +39,12 @@ const collectDigit = (digit) => {
 
 const createNumber = () => {
   if (digitArray.length == 1 && digitArray[0] == '.') {
+    let lastDotIndex = display.innerHTML.lastIndexOf('.');
+    display.innerHTML = display.innerHTML.substring(0, lastDotIndex) + '0'
     digitArray[0] = 0;
   }
   numbersToWorkWith.push(parseFloat(digitArray.join('')));
   digitArray = [];
-};
-
-const clearDisplayAndNumbersToWorkWith = () => {
-  numbersToWorkWith = [];
-  display.innerHTML = '';
 };
 
 const collectOperator = (operator) => {
@@ -50,12 +53,27 @@ const collectOperator = (operator) => {
   addListenerToDecimalPoint();
 };
 
+const clearDisplayAndNumbersToWorkWith = () => {
+  numbersToWorkWith = [];
+  display.innerHTML = '';
+};
+
+const clearEverything = () => {
+  digitArray = [];
+  numbersToWorkWith = [];
+  operatorsToWorkWith = [];
+  display.innerHTML = null;
+  previousInput = 0;
+  addListenerToDecimalPoint()
+};
+
 // Cselekményfák előzetes inputok alapján
 const previousInputIsNone = () => {
   if (currentInput == '.') { removeListenerForDecimalPoint() };
-  if (whatKindOfInput(currentInput) == 'digit') {collectDigit(currentInput) }
-
-  previousInput = currentInput;
+  if (whatKindOfInput(currentInput) == 'digit') {
+    collectDigit(currentInput);
+    previousInput = currentInput
+  }
 };
 
 const previousInputIsDigit = () => {
@@ -102,21 +120,6 @@ const previousInputIsStart = () => {
   previousInput = currentInput;
 };
 
-const whatKindOfInput = (input) => {
-  return arrayOfDigits.includes(input) ? 'digit' :
-    arrayOfOperators.includes(input) ? 'operator' :
-      input == '=' ? 'start' : none;
-};
-
-const clearEverything = () => {
-  digitArray = [];
-  numbersToWorkWith = [];
-  operatorsToWorkWith = [];
-  display.innerHTML = null;
-  previousInput = 0;
-  addListenerToDecimalPoint()
-};
-
 // Az adatbevitel folyamata
 function inputController() {
   currentInput = this.innerHTML;
@@ -124,7 +127,8 @@ function inputController() {
     previousInput === 0 ? previousInputIsNone() :
       whatKindOfInput(previousInput) == 'digit' ? previousInputIsDigit() :
         whatKindOfInput(previousInput) == 'operator' ? previousInputIsOperator() :
-          whatKindOfInput(previousInput) == 'start' ? previousInputIsStart() : none
+          whatKindOfInput(previousInput) == 'start' ? previousInputIsStart() : none;
+  // previousInput = currentInput ?
 };
 
 // A számolás
@@ -132,7 +136,7 @@ const calculate = () => {
   multiplyOrDivide();
   subtract();
   display.innerHTML = summation();
-  if (display.innerHTML == 'NaN') {display.innerHTML = '(NaN)e szórakozzál velem...'}
+  if (display.innerHTML == 'NaN') { display.innerHTML = '(NaN)e szórakozzál velem...' }
   finishUpCalculation();
 };
 

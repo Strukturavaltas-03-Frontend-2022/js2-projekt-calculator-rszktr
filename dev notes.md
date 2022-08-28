@@ -1,3 +1,9 @@
+## v1.0
+
+### Elkészült:
+- Műveleti jel váltogatásos bug javítva.
+- Ha egy tizedesjel csak önmagában szerepel, akkor azt 0-ként írja ki
+
 ## v0.951
 
 ### Elkészült:
